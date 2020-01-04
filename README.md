@@ -4,22 +4,18 @@ This Hadoop-based web app allows users to view movie ratings for any given movie
 
 There are two webpages in the app:
 
-1. "/movie_ratings" to the view movie rating breakdown for any movie:
-
-<details><summary>Ratings demo</summary>
+<details><summary> "/movie_ratings" to view movie ratings breakdown for any movie:</summary>
 <p>
 
-![Ratings](etc/movie_ratings.gif)
+![Ratings](demo/movie_ratings.gif)
 
 </p>
 </details>
 
-2. "/movie_rankings" to display best or worst movies by genre:
-
-<details><summary>Rankings demo</summary>
+<details><summary> "/movie_rankings" to display best or worst movies by genre:</summary>
 <p>
 
-![Rankings](etc/movie_rankings.gif)
+![Rankings](demo/movie_rankings.gif)
 
 </p>
 </details>
@@ -101,6 +97,19 @@ The hql files and corresponding tables are:
 
 All web app code is found in the [movie_app](./movie_app) directory. It's a simple Node/Express app that uses mustache templating. The most interesting web-app code is found in [./movie_app/app.js](./movie_app/app.js) where I render each web-page and query the serving layer for the requested data.
 
+The first webpage [movie_ratings.html](./movie_app/public/movie_ratings.html) queries first from the "nprabhu_movie_titles_to_ids" table, in order to resolve an imdbid from the title query. From there, I query the "nprabhu_movie_ratings_count_hbase" table in which each row stores the count per rating-type of the given movie. Here is an example query for Toy Story, which has ImdbId 114709. The "value" of each rating count appears as bytecode because their data-types are BigInt.
+
+![Ratings](demo/ratings_count.jpg)
+
+The second webpage [movie_rankings.html](./movie_app/public/movie_rankings.html) queries data from the "nprabhu_movie_ratings_average_hbase" table. In order to effectively "sort" the movies by ranking, I made my key for this table
+"genre:::avg_rating:::imdbid". Since the table stores the keys in lexographic order, the table is inherently stored in sorted order by genre because of the avg_rating component in the key. There is also an "ALL" genre that ranks movies irrespective of genre. Extracting the N worst movies for a genre is as simple as pulling the first N results of a scan; retrieving the N best movies just requires a reversed scan.
+
+Here some example entries from this table for Toy Story:
+![RankingsGet](demo/rankings_get.jpg)
+
+And here is a sample scan. Note how the entries are effectively sorted by avg rating.
+![RankingsScan](demo/rankings_scan.jpg)
+
 ## Speed layer
 
 The speed layer (found in the [speed-layer](./speed-layer) directory) allows the app to ingest real-time updates to the movie ratings data, and then update the hbase tables for immediate use of the new data. This layer consists of two parts; the producer and consumer of a kafka queue.
@@ -114,27 +123,19 @@ The main method in StreamRatings.scala mapped onto the record is "incrementRatin
 1. map the record's MovieId to an ImdbId (primary key in most hbase tables)
 2. Increment the appropriate rating in "movieRatingsCount" for this ImdbId
 3. Computes a new average rating for the movie
-4. Updates the "nprabhu_movie_ratings_average_by_genre_hbase" table with this newest avg rating,
-   so all rankings have the latest result.
-   -- to find the old key, we must reference "nprabhu_movie_ratings_average_secondary_index" to find the old average
-   -- as well as "nprabhu_movie_genres_hbase" to find all genres associated with the movie.
-5. Updates "nprabhu_movie_ratings_average_secondary_index" to store new avg rating,
-   so it's retreivable for future streaming updates.
+4. Updates the "nprabhu_movie_ratings_average_by_genre_hbase" table with this newest avg rating,so all rankings have the latest result.
+   - to find the old key, we must reference "nprabhu_movie_ratings_average_secondary_index" to find the old average
+     as well as "nprabhu_movie_genres_hbase" to find all genres associated with the movie. Here are example queries from these tables:
+     ![SecIndex](demo/sec_index.jpg)
+     ![SecIndex](demo/genres.jpg)
+5. Updates "nprabhu_movie_ratings_average_secondary_index" to store new avg rating, so it's retreivable for future streaming updates.
 
 Here are some screenshots of the running producer and consumer programs as evidence to the hbase tables being updated with the streamed data.
 
-<details><summary>Producer demo</summary>
-<p>
+Producer demo:
 
-![Producer](etc/producer_run.jpg)
+![Producer](demo/producer_run.jpg)
 
-</p>
-</details>
+Consumer demo:
 
-<details><summary>Consumer demo</summary>
-<p>
-
-![Consumer](etc/consumer_run.jpg)
-
-</p>
-</details>
+![Consumer](demo/consumer_run.jpg)
