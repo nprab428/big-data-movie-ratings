@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+
+<head>
+    <title>Movie Rankings</title>
+    <link type="text/css" rel="stylesheet" href="elegant-aero.css" />
+</head>
+
+<body
+    style='background-image:URL("popcorn-background.jpg");background-repeat:no-repeat;background-position:center top;-webkit-background-size:100%;-moz-background-size:100%;-o-background-size:100%;background-size: 100%;'>
+    <p style="margin-bottom:2cm" />
+    <form action="/get_movie_rankings.html" style="width:300px;margin:0 auto;padding-top=200px;background:#FFFFFF"
+        method="get" target="results_iframe" class="elegant-aero">
+        <div>
+            <span>Number of movies:</span>
+            <input type="number" name="count" min="5" max="50" value="10" />
+        </div>
+        Genre:
+        <select name="genre">
+            <option value="all">All</option>
+            <option value="action">Action</option>
+            <option value="adventure">Adventure</option>
+            <option value="animation">Animation</option>
+            <option value="children">Children</option>
+            <option value="comedy">Comedy</option>
+            <option value="crime">Crime</option>
+            <option value="documentary">Documentary</option>
+            <option value="drama">Drama</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="filmnoir">Film-Noir</option>
+            <option value="horror">Horror</option>
+            <option value="imax">IMAX</option>
+            <option value="musical">Musical</option>
+            <option value="mystery">Mystery</option>
+            <option value="romance">Romance</option>
+            <option value="scifi">Sci-Fi</option>
+            <option value="thriller">Thriller</option>
+            <option value="war">War</option>
+            <option value="western">Western</option>
+        </select>
+        <input type="radio" id="best" name="rank-type" value="best" checked>Best
+        <input type="radio" id="worst" name="rank-type" value="worst">Worst
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <p style="margin-bottom:2cm" />
+    <iframe frameBorder="0" name="results_iframe"
+        style="display:block;width:70%;margin-left:auto;margin-right:auto;height:1500" />
+</body>
+
+</html>

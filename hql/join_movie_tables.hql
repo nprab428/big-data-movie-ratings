@@ -1,0 +1,56 @@
+DROP TABLE IF EXISTS nprabhu_movies;
+create table nprabhu_movies (
+    ImdbId int, 
+    Title string,
+    Year smallint,
+    ReleaseDate date, 
+    Runtime smallint, 
+    Crime boolean,
+    Musical boolean,
+    Horror boolean,
+    FilmNoir boolean,
+    Children boolean,
+    Comedy boolean,
+    Documentary boolean,
+    Drama boolean,
+    Action boolean,
+    Fantasy boolean,
+    Adventure boolean,
+    Mystery boolean,
+    War boolean,
+    Imax boolean,
+    Romance boolean,
+    Western boolean,
+    Animation boolean,
+    Thriller boolean,
+    SciFi boolean)
+  stored as orc;
+
+insert overwrite table nprabhu_movies
+    select l.imdbid as imdbid, 
+    m.originaltitle as title,
+    g.year as year, 
+    m.ReleaseDate as releasedate,
+    m.runtime as runtime, 
+    g.crime as crime,
+    g.musical as musical,
+    g.horror as horror,
+    g.filmnoir as filmnoir,
+    g.children as children,
+    g.comedy as comedy,
+    g.documentary as documentary,
+    g.drama as drama,
+    g.action as action,
+    g.fantasy as fantasy,
+    g.adventure as adventure,
+    g.mystery as mystery,
+    g.war as war,
+    g.imax as imax,
+    g.romance as romance,
+    g.western as western,
+    g.animation as animation,
+    g.thriller as thriller,
+    g.sciFi as scifi 
+  from nprabhu_movies_metadata m join nprabhu_movie_links_hive l join nprabhu_movie_genres_hive g
+    on l.tmdbid = m.id and l.movieid = g.movieid;
+
