@@ -20,7 +20,7 @@ There are two webpages in the app:
 </p>
 </details>
 
-The app is modeled after the [lambda architecture](https://en.wikipedia.org/wiki/Lambda_architecture) and consists of a batch layer (HDFS/Hive), serving layer (HBase), and streaming layer (Spark and Kafka).
+The app is modeled after the [lambda architecture](https://en.wikipedia.org/wiki/Lambda_architecture) and consists of a batch layer (HDFS/Hive), serving layer (HBase), and speed layer (Spark and Kafka).
 
 - [Background](#background)
 - [Data](#data)
